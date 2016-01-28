@@ -9,6 +9,8 @@ With a fuzzy text search, loading the entirety of the columns we want to search 
 It makes much more sense to leverage the database to do the work.
 In this post, we'll examine a way we were able to do this at the model level, without modifying Ecto or doing much more than writing a couple functions.
 
+If you are already familiar with Phoenix in general, create an application, and generate a single model with a `name` field that is a string, and skip [here](link) to save some time :)
+
 ## Getting Started
 First off, let's generate a Phoenix application.
 If you have not done this before, the [Phoenix Guides](http://www.phoenixframework.org/docs/overview) have a great walkthrough to get up and running.
@@ -138,7 +140,7 @@ Usage:
 record
  => %User{...}
 """
-...
+e
   @spec execute_and_load(String.t, map(), __MODULE__) :: __MODULE__
   def execute_and_load(sql, params, model) do
     Ecto.Adapters.SQL.query!(__MODULE__, sql, params)
@@ -241,8 +243,6 @@ Since it would take 1 more character to become the string `ABCD`, we get the out
 We can reverse the arguments, too:
 
 ```
-$ psql
-postgres# \c todos_dev
 todos_dev=# SELECT levenshtein('ABCD', 'ABC');
 levenshtein
 -------------
@@ -337,4 +337,4 @@ The code is available on [Github](https://github.com/cometaworks/fast_fuzzy_sear
 
 And if you'd like to have some design, software craftsmanship, or other general tech needs feel free to give us a buzz at
 
-![CometaWorks](http://i.imgur.com/hYxiTro.png)
+<a href="http://cometa.works"><div alt="CometaWorks" style="text-align:center"><img src ="http://i.imgur.com/hYxiTro.png" /></div></a>
