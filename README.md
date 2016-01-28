@@ -44,7 +44,7 @@ $ vi mix.exs
 ```
 
 ```elixir
-...
+..
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
@@ -58,7 +58,7 @@ $ vi mix.exs
      {:cowboy, "~> 1.0"},
      {:faker, "~> 0.5"}] # simple, right?
   end
-...
+..
 ```
 
 Now, we will have to grab this new dependency.
@@ -131,7 +131,7 @@ end
 Now, we will add a couple of functions to execute raw sql and then associate it with a model.
 
 ```elixir
-...
+..
   @doc """
 A simple means to execute raw sql
 Usage:
@@ -155,7 +155,7 @@ e
       Ecto.Schema.__load__(model, nil, nil, [], fields, &__MODULE__.__adapter__.load/2)
     end
   end
-...
+..
 ```
 
 This looks like a lot, but it really isn't.
@@ -164,7 +164,7 @@ Let's break it down starting with our private function `load_into/2`.
 ```elixir
 def load_into(response, model) do
   Enum.map(response.rows, fn(row) ->
-    ...
+    ..
   end)
 ```
 
@@ -172,20 +172,20 @@ Starting here, we can simply see that whatever we take in for `response` is expe
 Note that we also pass in a `model`, in this case we want the model to be a struct like our `%Todo{}`.
 
 ```elixir
-...
+..
       fields = Enum.reduce(Enum.zip(response.columns, row), %{}, fn({key, value}, map) ->
         Map.put(map, key, value)
       end)
-...
+..
 ```
 
 Don't be scared by the use of reduce and zip here.
 Essentially, all we are doing is taking what amounts to a CSV (a list of columns names and values associated by index in more lists) and turning them into a series of `map` data structures.
 
 ```elixir
-...
+..
       Ecto.Schema.__load__(model, nil, nil, [], fields, &__MODULE__.__adapter__.load/2)
-...
+..
 ```
 
 And now, last but not lease, we call `Ecto.Scheme.__load__/6`.
@@ -194,10 +194,10 @@ What this does is it takes our map, and puts our new values into a struct that i
 Now, on to `execute_and_load/3`:
 
 ```elixir
-...
+..
     Ecto.Adapters.SQL.query!(__MODULE__, sql, params)
       |> load_into(model)
-...
+..
 ```
 
 This part is a bit easier on the eyes.
