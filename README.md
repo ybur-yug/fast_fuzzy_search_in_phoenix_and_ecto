@@ -223,3 +223,118 @@ So now we can load a model in from raw SQL and execute whatever we want inside.
 Now its time so add some fuzzy search.
 But first, let's experiment with it a bit and learn what we will be utilizing.
 
+## Using The Levenshtein Function
+Let's fire up `psql` and play a bit.
+
+```
+$ psql
+postgres# \c todos_dev
+todos_dev=# SELECT levenshtein('ABC', 'ABCD');
+levenshtein
+-------------
+           1
+(1 row)
+```
+
+Since it would take 1 more character to become the string `ABCD`, we get the output `1`.
+
+We can reverse the arguments, too:
+
+```
+$ psql
+postgres# \c todos_dev
+todos_dev=# SELECT levenshtein('ABCD', 'ABC');
+levenshtein
+-------------
+           1
+(1 row)
+```
+
+## Implementing It In Our Model
+Now, we can add this functionality to our model quite easily with the help of the functions we wrote earlier in `lib/todos/repo.ex`.
+
+```
+$ vi web/models/todo.ex
+```
+
+```elixir
+...
+  alias Todos.Todo
+  alias Todos.Repo
+  def fuzzy_name_search(query_string) do
+    query = """
+SELECT *
+FROM todos
+WHERE levenshtein(name, $1) < 5
+ORDER BY levenshtein(name, $1)
+LIMIT 10;
+"""
+    query
+    |> Repo.execute_and_load([query_string], Todo)
+  end
+...
+```
+
+Let's break this down like we have the rest.
+
+First, we set up a basic `SELECT` query.
+We also alias the modules `Todo` and `Repo` for simple access.
+Now, we want to find all the matches of where our levenshtein distance is less than the first variable we have given.
+In our `execute_and_load/3` function, the second argument is a filler variable to be used in SQL.
+
+So we pipe the query in there, with our parameters of the string we want to match, and the model we want to map it to coming out, and now with `load_into/2` we are good to go.
+
+## Testing It Out
+Let's use our new function in IEx to test is out.
+
+```
+$ iex -S mix
+iex(1)> alias Todos.Todo
+iex(2)> Todo.fuzzy_name_search("custom")
+[debug] SELECT *
+FROM todos
+WHERE levenshtein(name, $1) < 5
+ORDER BY levenshtein(name, $1)
+LIMIT 10;
+ ["custom"] OK query=114.9ms queue=16.6ms
+[%Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 1,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:44Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:44Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 29,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:44Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:44Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 42,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:44Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:44Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 88,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:44Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:44Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 114,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:44Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:44Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 141,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:44Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:44Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 302,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:45Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:45Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 378,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:45Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:45Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 430,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:45Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:45Z>},
+ %Todos.Todo{__meta__: #Ecto.Schema.Metadata<:loaded>, id: 508,
+  inserted_at: #Ecto.DateTime<2016-01-28T20:01:45Z>, name: "customized",
+  updated_at: #Ecto.DateTime<2016-01-28T20:01:45Z>}]
+```
+
+Boom, we have success.
+
+If you enjoyed this, follow me on [Twitter](https://twitter.com/yburyug).
+
+The code is available on [Github](https://github.com/cometaworks/fast_fuzzy_search_in_phoenix_and_ecto)
+
+And if you'd like to have some design, software craftsmanship, or other general tech needs feel free to give us a buzz at
+
+![CometaWorks](http://i.imgur.com/hYxiTro.png)

@@ -1,5 +1,7 @@
 defmodule Todos.Todo do
   use Todos.Web, :model
+  alias Todos.Todo
+  alias Todos.Repo
 
   schema "todos" do
     field :name, :string
@@ -19,5 +21,17 @@ defmodule Todos.Todo do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+
+  def fuzzy_name_search(query_string) do
+    query = """
+SELECT *
+FROM todos
+WHERE levenshtein(name, $1) < 5
+ORDER BY levenshtein(name, $1)
+LIMIT 10;
+"""
+    query
+    |> Repo.execute_and_load([query_string], Todo)
   end
 end
