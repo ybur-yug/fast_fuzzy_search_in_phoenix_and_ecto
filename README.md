@@ -16,7 +16,7 @@ Once you have gotten Phoenix, Elixir, and Erlang installer we can create our pro
 We will be building this purely as an API, but you can discard the `--no-brunch` flag if you wish to use Phoenix views.
 
 ```
-$ mix phoenix.new todos
+$ mix phoenix.new todos --no-brunch
 $ cd todos
 $ mix do deps.get, compile, ecto.create
 $ iex -S mix phoenix.server
@@ -128,16 +128,15 @@ end
 
 Now, we will add a couple of functions to execute raw sql and then associate it with a model.
 
-```
+```elixir
 ...
   @doc """
-### A simple means to execute raw sql
+A simple means to execute raw sql
 Usage:
-```
+
 [record | _]AccessIO.Repo.execute_and_load("SELECT * FROM users WHERE id = $1", [1], User)
 record
-# => %User{...}
-```
+ => %User{...}
 """
 ...
   @spec execute_and_load(String.t, map(), __MODULE__) :: __MODULE__
@@ -160,7 +159,7 @@ record
 This looks like a lot, but it really isn't.
 Let's break it down starting with our private function `load_into/2`.
 
-```
+```elixir
 def load_into(response, model) do
   Enum.map(response.rows, fn(row) ->
     ...
@@ -170,7 +169,7 @@ def load_into(response, model) do
 Starting here, we can simply see that whatever we take in for `response` is expected to be a list of sorts.
 Note that we also pass in a `model`, in this case we want the model to be a struct like our `%Todo{}`.
 
-```
+```elixir
 ...
       fields = Enum.reduce(Enum.zip(response.columns, row), %{}, fn({key, value}, map) ->
         Map.put(map, key, value)
@@ -181,7 +180,7 @@ Note that we also pass in a `model`, in this case we want the model to be a stru
 Don't be scared by the use of reduce and zip here.
 Essentially, all we are doing is taking what amounts to a CSV (a list of columns names and values associated by index in more lists) and turning them into a series of `map` data structures.
 
-```
+```elixir
 ...
       Ecto.Schema.__load__(model, nil, nil, [], fields, &__MODULE__.__adapter__.load/2)
 ...
@@ -192,7 +191,7 @@ What this does is it takes our map, and puts our new values into a struct that i
 
 Now, on to `execute_and_load/3`:
 
-```
+```elixir
 ...
     Ecto.Adapters.SQL.query!(__MODULE__, sql, params)
       |> load_into(model)
