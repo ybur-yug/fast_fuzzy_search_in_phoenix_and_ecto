@@ -9,7 +9,7 @@ With a fuzzy text search, loading the entirety of the columns we want to search 
 It makes much more sense to leverage the database to do the work.
 In this post, we'll examine a way we were able to do this at the model level, without modifying Ecto or doing much more than writing a couple functions.
 
-If you are already familiar with Phoenix in general, create an application, and generate a single model with a `name` field that is a string, and skip [here](link) to save some time :)
+If you are already familiar with Phoenix in general, create an application, and generate a single model with a `name` field that is a string, and skip [here](https://github.com/cometaworks/fast_fuzzy_search_in_phoenix_and_ecto/blob/master/README.md#adding-search-to-our-model-enter-levenshtein) to save some time :)
 
 ## Getting Started
 First off, let's generate a Phoenix application.
