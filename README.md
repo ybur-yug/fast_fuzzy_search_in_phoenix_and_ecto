@@ -136,11 +136,11 @@ Now, we will add a couple of functions to execute raw sql and then associate it 
 A simple means to execute raw sql
 Usage:
 
-[record | _]AccessIO.Repo.execute_and_load("SELECT * FROM users WHERE id = $1", [1], User)
+[record | _]Todos.Repo.execute_and_load("SELECT * FROM users WHERE id = $1", [1], Todo)
 record
- => %User{...}
+ => %Todo{...}
 """
-e
+
   @spec execute_and_load(String.t, map(), __MODULE__) :: __MODULE__
   def execute_and_load(sql, params, model) do
     Ecto.Adapters.SQL.query!(__MODULE__, sql, params)
@@ -275,7 +275,7 @@ LIMIT 10;
 ...
 ```
 
-Let's break this down like we have the rest.
+Let's break this down like we have the rest of these code snippets.
 
 First, we set up a basic `SELECT` query.
 We also alias the modules `Todo` and `Repo` for simple access.
