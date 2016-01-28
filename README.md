@@ -1,6 +1,6 @@
 # Fast Fuzzy Text Search In Phoenix With Ecto
 
-![CometaWorks](http://i.imgur.com/hYxiTro.png)
+<a href="http://cometa.works"><div alt="CometaWorks" style="text-align:center"><img src ="http://i.imgur.com/hYxiTro.png" /></div></a>
 
 ## Introduction
 At CometaWorks, we have grown to adore [Elixir](http://www.elixir-lang.org) and [Phoenix](http://www.phoenixframework.org).
