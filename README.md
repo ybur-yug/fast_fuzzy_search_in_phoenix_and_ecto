@@ -287,7 +287,7 @@ So we pipe the query in there, with our parameters of the string we want to matc
 ## Testing It Out
 Let's use our new function in IEx to test is out.
 
-```
+```elixir
 $ iex -S mix
 iex(1)> alias Todos.Todo
 iex(2)> Todo.fuzzy_name_search("custom")
