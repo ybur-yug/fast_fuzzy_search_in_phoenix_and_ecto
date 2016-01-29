@@ -188,7 +188,7 @@ Essentially, all we are doing is taking what amounts to a CSV (a list of columns
 ..
 ```
 
-And now, last but not lease, we call `Ecto.Scheme.__load__/6`.
+And now, last but not lease, we call `Ecto.Schema.__load__/6`.
 What this does is it takes our map, and puts our new values into a struct that is a `%Todos.Todo{}` struct, so that we are dealing with our own model again.
 
 Now, on to `execute_and_load/3`:
