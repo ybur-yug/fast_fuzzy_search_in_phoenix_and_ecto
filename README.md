@@ -4,7 +4,7 @@
 
 ## Introduction
 At CometaWorks, we have grown to adore [Elixir](http://www.elixir-lang.org) and [Phoenix](http://www.phoenixframework.org).
-Recently, in a microservice we were building for a client required fuzzy text search.
+Recently, in a microservice we were building for a client, they required fuzzy text search.
 With a fuzzy text search, loading the entirety of the columns we want to search into memory would be quite a heavy operation.
 It makes much more sense to leverage the database to do the work.
 In this post, we'll examine a way we were able to do this at the model level, without modifying Ecto or doing much more than writing a couple functions.
