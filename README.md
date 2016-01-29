@@ -250,6 +250,12 @@ levenshtein
 (1 row)
 ```
 
+Now, this example is optimized for small strings.
+That said, even for reasonably sized bodies of text a levenshtein distance check can be quite efficient to in-memory methods, especially when working in interpreted languages.
+We won't go into benchmarking exactly here, but for strings the size of a paragraph or smaller, adjust distance accordingly but also know the search space expands rapidly as you increase the input size.
+Feel free to play around.
+Going from word, to sentence, to a statement, to a paragraph, and feeling out the various distances and sampling the size of output should give you an idea of if it is reasonable for your personal application of the function.
+
 ## Implementing It In Our Model
 Now, we can add this functionality to our model quite easily with the help of the functions we wrote earlier in `lib/todos/repo.ex`.
 
